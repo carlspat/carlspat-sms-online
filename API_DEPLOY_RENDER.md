@@ -11,7 +11,7 @@ Push the online app to `carlspat/carlspat-sms-online` on its `main` branch. The 
 ## Create the Render service
 
 1. In Render, choose **New → Blueprint** and connect `carlspat/carlspat-sms-online`, branch `main`.
-2. Render will read the repository's `render.yaml`. Review the service and select the plan you want before creating it; the plan can affect cost and whether the service sleeps when idle.
+2. Render will read the repository's `render.yaml`, which selects the Free web-service plan in Frankfurt. Free services sleep after 15 minutes without traffic, can restart, and have monthly usage limits. Render describes Free instances as suitable for testing and hobby projects, not production. Keep this deployment as a pilot until you can use a production plan.
 3. When prompted for `DATABASE_URL`, open the new Supabase project and choose **Connect → Session pooler**. Copy the PostgreSQL connection string (port 5432) into Render's secret field. Do not use the Supabase dashboard URL, publishable key, or service-role key here.
 4. When prompted for `CORS_ORIGIN`, enter the production domain for the new Vercel website. Do not use the old `carlspat-sms.vercel.app` domain.
 5. Confirm the service has generated `JWT_ACCESS_SECRET` and `JWT_REFRESH_SECRET`, then review and approve the Blueprint sync.
