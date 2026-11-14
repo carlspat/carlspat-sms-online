@@ -20,6 +20,6 @@ services:
       - key: JWT_REFRESH_TTL
         value: 7d
       - key: CORS_ORIGIN
-        value: https://carlspat-sms.vercel.app
+        sync: false
       - key: SEED_ON_START
         value: "false"
