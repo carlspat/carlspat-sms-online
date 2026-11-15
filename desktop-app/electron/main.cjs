@@ -8,7 +8,7 @@ const { createSync } = require('./sync.cjs')
 let services
 let cloudSync
 function createWindow() {
-  const win = new BrowserWindow({ title: 'OlufunmilyoSMS', icon: path.join(__dirname, '..', 'build', 'icon.ico'), width: 1440, height: 920, minWidth: 960, minHeight: 640, backgroundColor: '#f5f6fa', webPreferences: { preload: path.join(__dirname, 'preload.cjs'), contextIsolation: true, nodeIntegration: false, sandbox: true } })
+  const win = new BrowserWindow({ title: 'OlufunmilayoSMS', icon: path.join(__dirname, '..', 'build', 'icon.ico'), width: 1440, height: 920, minWidth: 960, minHeight: 640, backgroundColor: '#f5f6fa', webPreferences: { preload: path.join(__dirname, 'preload.cjs'), contextIsolation: true, nodeIntegration: false, sandbox: true } })
   win.removeMenu()
   win.webContents.session.webRequest.onHeadersReceived((details, callback) => callback({responseHeaders:{...details.responseHeaders,'Content-Security-Policy':["default-src 'self'; script-src 'self'; style-src 'self' 'unsafe-inline'; img-src 'self' data: file:; font-src 'self' data:; connect-src 'self' http://127.0.0.1:5173"]}}))
   if (!app.isPackaged) win.loadURL('http://127.0.0.1:5173')
@@ -19,11 +19,14 @@ function createWindow() {
 app.whenReady().then(async () => {
   // Keep school records in the original product-name folder after the app was
   // rebranded, so upgrades continue using the database users already created.
-  const legacyUserDataPath = path.join(app.getPath('appData'), 'Northstar School Management')
-  try {
-    await fs.access(path.join(legacyUserDataPath, 'northstar-school.sqlite3'))
-    app.setPath('userData', legacyUserDataPath)
-  } catch { /* No legacy database: use Electron's current app data folder. */ }
+  for (const previousName of ['Northstar School Management', 'OlufunmilyoSMS']) {
+    const previousUserDataPath = path.join(app.getPath('appData'), previousName)
+    try {
+      await fs.access(path.join(previousUserDataPath, 'northstar-school.sqlite3'))
+      app.setPath('userData', previousUserDataPath)
+      break
+    } catch { /* Try the next previous product name before using the default. */ }
+  }
   const dbPath = path.join(app.getPath('userData'), 'northstar-school.sqlite3')
   const db = openDatabase(dbPath)
   services = createServices(db)

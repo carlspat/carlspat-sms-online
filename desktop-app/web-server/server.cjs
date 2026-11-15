@@ -148,7 +148,7 @@ async function start(databasePool) {
     response.setHeader('Access-Control-Allow-Methods', 'POST, GET, OPTIONS')
     if (request.method === 'OPTIONS') { response.writeHead(204); return response.end() }
     if (request.url === '/api/v1/health') {
-      try { await pool.query('SELECT 1'); return json(response, 200, { ok: true, application: 'OlufunmilyoSMS desktop web', status: 'ok' }) }
+      try { await pool.query('SELECT 1'); return json(response, 200, { ok: true, application: 'OlufunmilayoSMS desktop web', status: 'ok' }) }
       catch { return json(response, 503, { ok: false, error: 'School database unavailable.' }) }
     }
     if (request.method !== 'POST' || !request.url?.startsWith('/api/desktop/')) return json(response, 404, { ok: false, error: 'Not found.' })

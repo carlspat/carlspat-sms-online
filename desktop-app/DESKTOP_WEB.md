@@ -1,4 +1,4 @@
-# OlufunmilyoSMS desktop application in a browser
+# OlufunmilayoSMS desktop application in a browser
 
 This uses the root `src/`, `public/`, and `electron/services.cjs` from the installed app. The nested `carlspat-sms-github/web` Next.js app is a separate product and is not this interface.
 
