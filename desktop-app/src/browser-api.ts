@@ -32,7 +32,10 @@ if (browserMode) {
     if (!endpoint) throw new Error('The school API address has not been configured for this website.')
     let setupKey: string | null = null
     if (name === 'setupAdmin') {
-      setupKey = window.prompt('Enter the private school setup key supplied by the host administrator.')
+      const input = args[0] as Record<string, unknown> | undefined
+      setupKey = typeof input?.setupKey === 'string' ? input.setupKey.trim() : null
+      const { setupKey: _setupKey, ...credentials } = input || {}
+      args[0] = credentials
       if (!setupKey) throw new Error('The setup key is required to register the first administrator.')
     }
     if (['chooseSchoolLogo', 'chooseStudentPhoto', 'uploadResource', 'restoreBackup'].includes(name)) {
