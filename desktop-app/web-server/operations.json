@@ -1,0 +1,418 @@
+{
+  "setup:status": [
+    "auth",
+    "needsSetup"
+  ],
+  "auth:setup": [
+    "auth",
+    "createFirstAdmin"
+  ],
+  "auth:login": [
+    "auth",
+    "login"
+  ],
+  "auth:logout": [
+    "auth",
+    "logout"
+  ],
+  "auth:me": [
+    "auth",
+    "me"
+  ],
+  "stakeholders:self-register": [
+    "stakeholders",
+    "selfRegister"
+  ],
+  "school:get": [
+    "school",
+    "get"
+  ],
+  "school:update": [
+    "school",
+    "update"
+  ],
+  "school:logo": [
+    "school",
+    "setLogo"
+  ],
+  "school:academic-data": [
+    "school",
+    "academicData"
+  ],
+  "school:create-session": [
+    "school",
+    "createSession"
+  ],
+  "school:create-term": [
+    "school",
+    "createTerm"
+  ],
+  "school:update-session": [
+    "school",
+    "updateSession"
+  ],
+  "school:update-term": [
+    "school",
+    "updateTerm"
+  ],
+  "dashboard:summary": [
+    "dashboard",
+    "summary"
+  ],
+  "students:list": [
+    "students",
+    "list"
+  ],
+  "students:create": [
+    "students",
+    "create"
+  ],
+  "students:update": [
+    "students",
+    "update"
+  ],
+  "students:archive": [
+    "students",
+    "archive"
+  ],
+  "students:profile": [
+    "students",
+    "profile"
+  ],
+  "students:status": [
+    "students",
+    "changeStatus"
+  ],
+  "classes:list": [
+    "classes",
+    "list"
+  ],
+  "classes:create": [
+    "classes",
+    "create"
+  ],
+  "classes:assign-teacher": [
+    "classes",
+    "assignTeacher"
+  ],
+  "classes:assignments": [
+    "classes",
+    "assignments"
+  ],
+  "classes:teachers": [
+    "classes",
+    "teachers"
+  ],
+  "classes:subjects": [
+    "classes",
+    "classSubjects"
+  ],
+  "classes:assign-subject": [
+    "classes",
+    "assignSubject"
+  ],
+  "calendar:list": [
+    "calendar",
+    "list"
+  ],
+  "calendar:event": [
+    "calendar",
+    "addEvent"
+  ],
+  "calendar:timetable": [
+    "calendar",
+    "addTimetable"
+  ],
+  "fees:categories": [
+    "finance",
+    "categories"
+  ],
+  "fees:create-category": [
+    "finance",
+    "createCategory"
+  ],
+  "fees:update-category": [
+    "finance",
+    "updateCategory"
+  ],
+  "fees:delete-category": [
+    "finance",
+    "deleteCategory"
+  ],
+  "users:list": [
+    "users",
+    "list"
+  ],
+  "users:create": [
+    "users",
+    "create"
+  ],
+  "users:update": [
+    "users",
+    "update"
+  ],
+  "users:reset-password": [
+    "users",
+    "resetPassword"
+  ],
+  "users:deactivate": [
+    "users",
+    "deactivate"
+  ],
+  "finance:summary": [
+    "finance",
+    "summary"
+  ],
+  "finance:my-account": [
+    "finance",
+    "myAccount"
+  ],
+  "finance:record-payment": [
+    "finance",
+    "recordPayment"
+  ],
+  "finance:payments": [
+    "finance",
+    "payments"
+  ],
+  "finance:reverse-payment": [
+    "finance",
+    "reversePayment"
+  ],
+  "finance:receipt": [
+    "finance",
+    "receipt"
+  ],
+  "finance:expenses": [
+    "finance",
+    "expenses"
+  ],
+  "finance:expense-categories": [
+    "finance",
+    "expenseCategories"
+  ],
+  "finance:add-expense-category": [
+    "finance",
+    "addExpenseCategory"
+  ],
+  "finance:update-expense-category": [
+    "finance",
+    "updateExpenseCategory"
+  ],
+  "finance:delete-expense-category": [
+    "finance",
+    "deleteExpenseCategory"
+  ],
+  "finance:add-expense": [
+    "finance",
+    "addExpense"
+  ],
+  "finance:update-expense": [
+    "finance",
+    "updateExpense"
+  ],
+  "finance:delete-expense": [
+    "finance",
+    "deleteExpense"
+  ],
+  "finance:outstanding": [
+    "finance",
+    "outstanding"
+  ],
+  "finance:assignments": [
+    "finance",
+    "feeAssignments"
+  ],
+  "finance:assign-fee": [
+    "finance",
+    "assignFee"
+  ],
+  "finance:update-assignment": [
+    "finance",
+    "updateFeeAssignment"
+  ],
+  "finance:delete-assignment": [
+    "finance",
+    "deleteFeeAssignment"
+  ],
+  "finance:discount": [
+    "finance",
+    "grantDiscount"
+  ],
+  "academics:subjects": [
+    "academics",
+    "subjects"
+  ],
+  "academics:grading-scales": [
+    "academics",
+    "gradingScales"
+  ],
+  "academics:add-grade": [
+    "academics",
+    "addGrade"
+  ],
+  "academics:create-subject": [
+    "academics",
+    "createSubject"
+  ],
+  "academics:components": [
+    "academics",
+    "components"
+  ],
+  "academics:create-component": [
+    "academics",
+    "createComponent"
+  ],
+  "academics:record-result": [
+    "academics",
+    "recordResult"
+  ],
+  "academics:results": [
+    "academics",
+    "results"
+  ],
+  "academics:submit-results": [
+    "academics",
+    "submitResults"
+  ],
+  "academics:approve-results": [
+    "academics",
+    "approveResults"
+  ],
+  "academics:promotion": [
+    "academics",
+    "setPromotion"
+  ],
+  "academics:report-cards": [
+    "academics",
+    "reportCards"
+  ],
+  "academics:report-comments": [
+    "academics",
+    "saveReportComments"
+  ],
+  "academics:publish-report": [
+    "academics",
+    "publishReport"
+  ],
+  "academics:report-access": [
+    "academics",
+    "getReportCard"
+  ],
+  "attendance:list": [
+    "attendance",
+    "list"
+  ],
+  "attendance:mark": [
+    "attendance",
+    "mark"
+  ],
+  "attendance:classes": [
+    "attendance",
+    "classes"
+  ],
+  "stakeholders:list": [
+    "stakeholders",
+    "list"
+  ],
+  "stakeholders:registrations": [
+    "stakeholders",
+    "registrations"
+  ],
+  "stakeholders:register": [
+    "stakeholders",
+    "register"
+  ],
+  "stakeholders:update": [
+    "stakeholders",
+    "update"
+  ],
+  "stakeholders:deactivate": [
+    "stakeholders",
+    "deactivate"
+  ],
+  "stakeholders:review": [
+    "stakeholders",
+    "review"
+  ],
+  "stakeholders:review-student": [
+    "stakeholders",
+    "reviewStudent"
+  ],
+  "stakeholders:record-student": [
+    "stakeholders",
+    "recordStudent"
+  ],
+  "stakeholders:update-payment": [
+    "stakeholders",
+    "updatePayment"
+  ],
+  "portal:register-student": [
+    "stakeholders",
+    "registerStudent"
+  ],
+  "portal:my-registrations": [
+    "stakeholders",
+    "myRegistrations"
+  ],
+  "announcements:list": [
+    "communication",
+    "announcements"
+  ],
+  "announcements:create": [
+    "communication",
+    "createAnnouncement"
+  ],
+  "messages:list": [
+    "communication",
+    "messages"
+  ],
+  "messages:send": [
+    "communication",
+    "sendMessage"
+  ],
+  "messages:recipients": [
+    "communication",
+    "recipients"
+  ],
+  "messages:read": [
+    "communication",
+    "markMessageRead"
+  ],
+  "notifications:list": [
+    "communication",
+    "notifications"
+  ],
+  "notifications:read": [
+    "communication",
+    "markRead"
+  ],
+  "resources:list": [
+    "resources",
+    "list"
+  ],
+  "resources:read": [
+    "resources",
+    "read"
+  ],
+  "reports:student-register": [
+    "reports",
+    "studentRegister"
+  ],
+  "reports:financial": [
+    "reports",
+    "financial"
+  ],
+  "reports:data": [
+    "reports",
+    "data"
+  ],
+  "backups:create": [
+    "backups",
+    "create"
+  ],
+  "backups:restore": [
+    "backups",
+    "restore"
+  ]
+}
