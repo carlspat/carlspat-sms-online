@@ -30,6 +30,8 @@ app.whenReady().then(async () => {
   cloudSync = createSync(db, app, safeStorage)
   cloudSync.startAutomaticSync()
   const handlers = {
+    'receipts:list': (_,token) => services.paymentReceipts.list(token),
+    'receipts:read': (_,token,id) => services.paymentReceipts.read(token,id),
     'setup:status': () => services.auth.needsSetup(),
     'auth:setup': (_, input) => services.auth.createFirstAdmin(input),
     'auth:login': (_, input) => services.auth.login(input),
@@ -188,6 +190,15 @@ app.whenReady().then(async () => {
       await fs.writeFile(selected.filePath,bytes)
       return {ok:true,data:{filePath:selected.filePath,missingFiles:missingFiles.length}}
     } catch(error) {return {ok:false,error:error.message || 'Export failed.'}}
+  })
+  ipcMain.handle('receipts:choose-upload', async(event,token,input)=>{
+    if (event.senderFrame?.url && !event.senderFrame.url.startsWith('file://') && !event.senderFrame.url.startsWith('http://127.0.0.1:5173')) return {ok:false,error:'Untrusted application frame'}
+    try {
+      services.auth.me(token)
+      const selected=await dialog.showOpenDialog({title:'Upload payment receipt',properties:['openFile'],filters:[{name:'Payment receipt',extensions:['pdf','png','jpg','jpeg']}]})
+      if(selected.canceled||!selected.filePaths[0])return {ok:true,data:null}
+      return {ok:true,data:services.paymentReceipts.upload(token,selected.filePaths[0],input)}
+    }catch(error){return {ok:false,error:error.message||'Receipt upload failed.'}}
   })
   createWindow()
 })

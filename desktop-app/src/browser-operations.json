@@ -110,5 +110,8 @@
   "reportData": "reports:data",
   "createBackup": "backups:choose-create",
   "restoreBackup": "backups:choose-restore",
-  "exportOnlineBackup": "backups:choose-create"
+  "exportOnlineBackup": "backups:choose-create",
+  "paymentReceipts": "receipts:list",
+  "readPaymentReceipt": "receipts:read",
+  "uploadPaymentReceipt": "receipts:choose-upload"
 }

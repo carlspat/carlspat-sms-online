@@ -51,7 +51,7 @@ function upload(file, extensions, limit = 20 * 1024 * 1024) {
 }
 function rebaseFiles(db, state) {
   if (!state?.assetRoot || state.assetRoot === root) return
-  for (const [table, column] of [['schools','logo_path'], ['students','photograph_path'], ['stakeholder_registrations','photograph_path'], ['resources','stored_path']]) {
+  for (const [table, column] of [['schools','logo_path'], ['students','photograph_path'], ['stakeholder_registrations','photograph_path'], ['resources','stored_path'], ['payment_receipts','stored_path']]) {
     const columns = db.prepare(`PRAGMA table_info(${table})`).all()
     if (!columns.some(item => item.name === column)) continue
     for (const row of db.prepare(`SELECT id, ${column} value FROM ${table} WHERE ${column} IS NOT NULL`).all()) {
@@ -84,6 +84,10 @@ async function execute(channel, args, setupKey) {
     } else if (channel === 'students:choose-photo') {
       requirePermission(services, args[0], 'students.manage')
       data = upload(args.at(-1), ['.png', '.jpg', '.jpeg', '.webp'], 5 * 1024 * 1024)
+    } else if (channel === 'receipts:choose-upload') {
+      const source=upload(args.at(-1),['.pdf','.png','.jpg','.jpeg'],5*1024*1024)
+      data=services.paymentReceipts.upload(args[0],source,args[1]||{})
+      fs.unlinkSync(source)
     } else if (channel === 'resources:choose-upload') {
       requirePermission(services, args[0], 'resources.manage')
       const source = upload(args.at(-1), ['.pdf', '.docx', '.pptx', '.xlsx', '.jpg', '.jpeg', '.png', '.txt'])

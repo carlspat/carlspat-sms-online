@@ -1,5 +1,6 @@
 const { contextBridge, ipcRenderer } = require('electron')
 const calls = {
+  paymentReceipts: ['receipts:list'], readPaymentReceipt: ['receipts:read'], uploadPaymentReceipt: ['receipts:choose-upload'],
   exportOnlineBackup: ['online:export-backup'],
   setupStatus: ['setup:status'], setupAdmin: ['auth:setup'], login: ['auth:login'], logout: ['auth:logout'], me: ['auth:me'], selfRegisterStakeholder: ['stakeholders:self-register'], cloudSyncStatus: ['cloud-sync:status'], connectCloudSync: ['cloud-sync:connect'], runCloudSync: ['cloud-sync:run'], initialCloudSync: ['cloud-sync:initial'], disconnectCloudSync: ['cloud-sync:disconnect'],
   school: ['school:get'], updateSchool: ['school:update'], chooseSchoolLogo: ['school:choose-logo'], chooseStudentPhoto: ['students:choose-photo'], academicData: ['school:academic-data'], createSession: ['school:create-session'], updateSession: ['school:update-session'], createTerm: ['school:create-term'], updateTerm: ['school:update-term'], dashboard: ['dashboard:summary'], students: ['students:list'], studentProfile: ['students:profile'], changeStudentStatus: ['students:status'], createStudent: ['students:create'], updateStudent: ['students:update'], archiveStudent: ['students:archive'],

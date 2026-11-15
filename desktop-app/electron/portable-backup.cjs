@@ -11,7 +11,7 @@ function portableBackup(db, Database = require('better-sqlite3')) {
   const assetRoot = '/school-export'
   try {
     copy.prepare('DELETE FROM sessions').run()
-    for (const [table,column] of [['schools','logo_path'],['students','photograph_path'],['stakeholder_registrations','photograph_path'],['resources','stored_path']]) {
+    for (const [table,column] of [['schools','logo_path'],['students','photograph_path'],['stakeholder_registrations','photograph_path'],['resources','stored_path'],['payment_receipts','stored_path']]) {
       if (!copy.prepare(`PRAGMA table_info(${table})`).all().some(item=>item.name===column)) continue
       for (const row of copy.prepare(`SELECT id, ${column} value FROM ${table} WHERE ${column} IS NOT NULL`).all()) {
         if (!row.value) continue

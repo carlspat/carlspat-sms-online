@@ -38,9 +38,9 @@ if (browserMode) {
       args[0] = credentials
       if (!setupKey) throw new Error('The setup key is required to register the first administrator.')
     }
-    if (['chooseSchoolLogo', 'chooseStudentPhoto', 'uploadResource', 'restoreBackup'].includes(name)) {
+    if (['chooseSchoolLogo', 'chooseStudentPhoto', 'uploadResource', 'restoreBackup', 'uploadPaymentReceipt'].includes(name)) {
       const accept = name === 'restoreBackup' ? '.smsbackup' : name === 'uploadResource' ? '.pdf,.docx,.pptx,.xlsx,.jpg,.jpeg,.png,.txt' : '.png,.jpg,.jpeg,.webp'
-      const file = await pickFile(accept)
+      const file = await pickFile(name === 'uploadPaymentReceipt' ? '.pdf,.png,.jpg,.jpeg' : accept)
       if (!file) return null
       args.push(await filePayload(file))
     }

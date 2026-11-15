@@ -27,3 +27,7 @@ The online school starts empty. Existing desktop records and files are not impor
 ## Validation
 
 Run `npm run build` for the shared interface and `node --test web-server/test/*.test.cjs` for archive tests. Full API verification must include setup, session expiry, parent/student/stakeholder boundaries, fees, results, uploads, concurrent edits and restart recovery with a test database. Cloud deployment has not been performed by these local changes.
+
+## Bank instructions and payment receipts
+
+Payment details shows both Sterling Bank accounts to parents and students, and the examination account only to stakeholders. Parents and stakeholders can upload PDF/PNG/JPG receipts up to 5 MB, linked to their own pupil or approved stakeholder school application. Hosts see and download submitted files under Payment details. Receipt uploads do not verify payment or change outstanding balances automatically. Receipt metadata is stored in SQLite and its files are included in the private cloud archive and portable backups.

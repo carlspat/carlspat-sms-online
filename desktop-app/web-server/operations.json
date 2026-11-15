@@ -1,4 +1,12 @@
 {
+  "receipts:list": [
+    "paymentReceipts",
+    "list"
+  ],
+  "receipts:read": [
+    "paymentReceipts",
+    "read"
+  ],
   "setup:status": [
     "auth",
     "needsSetup"
