@@ -16,3 +16,5 @@ services:
         sync: false
       - key: SETUP_KEY
         generateValue: true
+      - key: CLOUDINARY_CLOUD_NAME
+        value: ixqbuvsd

@@ -11,6 +11,7 @@ function createPaymentReceipts(db, app, actor, audit) {
     return row
   }
   return {
+    metadata(token,id) {return visible(token,id)},
     list(token) {
       const user = actor(token)
       return db.prepare(`SELECT r.id,r.purpose,r.amount_kobo/100.0 amount,r.paid_on,r.bank_reference,r.original_name,r.size_bytes,r.created_at,u.username uploaded_by,s.first_name||' '||s.surname student_name,s.admission_number,sr.first_name||' '||sr.surname applicant_name,sr.exam_type,ss.name stakeholder_name FROM payment_receipts r JOIN users u ON u.id=r.uploaded_by LEFT JOIN students s ON s.id=r.student_id LEFT JOIN stakeholder_registrations sr ON sr.id=r.registration_id LEFT JOIN stakeholder_schools ss ON ss.id=sr.stakeholder_id ${host(user)?'':'WHERE r.uploaded_by=?'} ORDER BY r.created_at DESC`).all(...(host(user)?[]:[user.id]))

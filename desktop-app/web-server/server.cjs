@@ -9,6 +9,8 @@ const { openDatabase } = require('../electron/storage.cjs')
 const { createServices } = require('../electron/services.cjs')
 const operations = require('./operations.json')
 const { pack, unpack } = require('./state.cjs')
+const {createCloudinaryStore,filesIn}=require('./cloudinary-store.cjs')
+let media=createCloudinaryStore()
 
 if (!process.env.DATABASE_URL || !process.env.SETUP_KEY || !process.env.CORS_ORIGIN) throw new Error('DATABASE_URL, SETUP_KEY, and CORS_ORIGIN are required.')
 if (process.env.SETUP_KEY.length < 24) throw new Error('SETUP_KEY must contain at least 24 characters.')
@@ -31,13 +33,25 @@ function setupAllowed(value) {
   const expected = crypto.createHash('sha256').update(process.env.SETUP_KEY).digest()
   return crypto.timingSafeEqual(actual, expected)
 }
-function validatePaths(value) {
+async function validatePaths(value,cloudFiles,user) {
   if (!value || typeof value !== 'object') return
   for (const [key, item] of Object.entries(value)) {
-    if (/path$/i.test(key) && typeof item === 'string' && item && (!path.resolve(item).startsWith(root + path.sep) || !fs.existsSync(item))) throw new Error('Select a file through the upload control.')
-    if (typeof item === 'object') validatePaths(item)
+    if (/path$/i.test(key) && typeof item === 'string' && item) {
+      if(!path.resolve(item).startsWith(root+path.sep))throw new Error('Select a file through the upload control.')
+      if(!fs.existsSync(item)) {
+        if(key!=='photographPath'||!user?.permissions.includes('students.manage'))throw new Error('Select a file through the upload control.')
+        await materialize(item,cloudFiles)
+      }
+    }
+    if (typeof item === 'object') await validatePaths(item,cloudFiles,user)
   }
 }
+async function materialize(filename,cloudFiles) {
+  if(!filename)return
+  const relative=path.relative(root,filename).split(path.sep).join('/')
+  if(!fs.existsSync(filename))await media.hydrate(root,relative,cloudFiles)
+}
+async function materializeAll(cloudFiles) {for(const relative of Object.keys(cloudFiles))await media.hydrate(root,relative,cloudFiles)}
 function upload(file, extensions, limit = 20 * 1024 * 1024) {
   if (!file || typeof file.name !== 'string' || typeof file.data !== 'string') throw new Error('Select a file to upload.')
   const extension = path.extname(file.name).toLowerCase()
@@ -69,18 +83,42 @@ async function execute(channel, args, setupKey) {
     const saved = await client.query("SELECT payload FROM desktop_web.school_state WHERE id = 1 FOR UPDATE")
     fs.rmSync(root, { recursive: true, force: true }); fs.mkdirSync(root, { recursive: true })
     const previous = saved.rows[0]?.payload ? unpack(saved.rows[0].payload, root) : null
+    let cloudFiles=previous?.cloudFiles||{}
+    for(const reference of Object.values(cloudFiles))media.validate(reference)
+    const beforeFiles=filesIn(root)
     db = openDatabase(filename, Database)
     rebaseFiles(db, previous)
     const services = createServices(db, runtime)
     if (channel === 'stakeholders:self-register' && services.auth.needsSetup()) throw new Error('The host must register the first administrator before accepting stakeholder applications.')
-    if (!publicActions.has(channel)) services.auth.me(args[0])
+    const user=!publicActions.has(channel)?services.auth.me(args[0]):null
     if (channel === 'auth:setup' && !setupAllowed(setupKey)) throw new Error('The school setup key is incorrect.')
-    for (const arg of args) validatePaths(arg)
+    for (const arg of args) await validatePaths(arg,cloudFiles,user)
     let data
-    if (channel === 'school:choose-logo') {
+    if(channel==='cloud-storage:status') {
+      requirePermission(services,args[0],'school.manage')
+      data={configured:media.configured,cloudName:media.cloudName,folder:'olufunmilayo',cloudFiles:Object.keys(cloudFiles).length,pendingFiles:[...beforeFiles.keys()].filter(name=>!cloudFiles[name]).length}
+    } else if(channel==='cloud-storage:migrate') {
+      requirePermission(services,args[0],'school.manage')
+      if(!media.configured)throw new Error('Add the Cloudinary cloud name, API key and API secret in Render before migrating files.')
+      await client.query('INSERT INTO desktop_web.backup_history(payload) VALUES($1)',[pack(db,root,cloudFiles)])
+      const migrated=await media.persist(root,cloudFiles,beforeFiles,{all:true})
+      cloudFiles=migrated.references
+      data={configured:true,cloudName:media.cloudName,folder:'olufunmilayo',cloudFiles:Object.keys(cloudFiles).length,pendingFiles:0,migrated:migrated.migrated}
+    } else if(channel==='resources:read'||channel==='receipts:read') {
+      const service=channel==='resources:read'?services.resources:services.paymentReceipts
+      const record=service.metadata(args[0],args[1])
+      await materialize(record.stored_path,cloudFiles)
+      data=service.read(args[0],args[1])
+    } else if(channel==='school:get'||channel==='students:profile') {
+      const read=()=>channel==='school:get'?services.school.get(args[0]):services.students.profile(args[0],args[1])
+      data=read()
+      const filename=channel==='school:get'?data.logo_path:data.photograph_path
+      if(filename&&!fs.existsSync(filename)){await materialize(filename,cloudFiles);data=read()}
+    } else if (channel === 'school:choose-logo') {
       requirePermission(services, args[0], 'school.manage')
       const source = upload(args.at(-1), ['.png', '.jpg', '.jpeg', '.webp'], 5 * 1024 * 1024)
       data = services.school.setLogo(args[0], source)
+      fs.unlinkSync(source)
     } else if (channel === 'students:choose-photo') {
       requirePermission(services, args[0], 'students.manage')
       data = upload(args.at(-1), ['.png', '.jpg', '.jpeg', '.webp'], 5 * 1024 * 1024)
@@ -95,6 +133,7 @@ async function execute(channel, args, setupKey) {
       fs.unlinkSync(source)
     } else if (channel === 'backups:choose-create') {
       requirePermission(services, args[0], 'backups.manage')
+      await materializeAll(cloudFiles)
       const bytes = pack(db, root)
       await client.query('INSERT INTO desktop_web.backup_history(payload) VALUES($1)', [bytes])
       const backupName = `olufunmilyo-${new Date().toISOString().slice(0,10)}.smsbackup`
@@ -103,10 +142,12 @@ async function execute(channel, args, setupKey) {
       requirePermission(services, args[0], 'backups.manage')
       const file = args.at(-1)
       if (!file || !file.name.endsWith('.smsbackup')) throw new Error('Select an online school backup (.smsbackup).')
-      const old = pack(db, root)
+      const old = pack(db, root,cloudFiles)
       const bytes = Buffer.from(file.data, 'base64')
       db.close(); db = null
       fs.rmSync(root, { recursive: true, force: true }); const restored = unpack(bytes, root)
+      cloudFiles=restored.cloudFiles||{}
+      for(const reference of Object.values(cloudFiles))media.validate(reference)
       db = openDatabase(filename, Database)
       rebaseFiles(db, restored)
       if (db.pragma('integrity_check', { simple: true }) !== 'ok') throw new Error('Backup integrity check failed.')
@@ -124,7 +165,8 @@ async function execute(channel, args, setupKey) {
     }
     // Cloud snapshots do not use the desktop mirror outbox.
     db.prepare('DELETE FROM desktop_sync_outbox').run()
-    const snapshot = pack(db, root)
+    if(media.configured&&channel!=='cloud-storage:migrate')cloudFiles=(await media.persist(root,cloudFiles,beforeFiles)).references
+    const snapshot = pack(db, root,cloudFiles)
     await client.query('INSERT INTO desktop_web.school_state(id,payload) VALUES(1,$1) ON CONFLICT(id) DO UPDATE SET payload=excluded.payload, updated_at=now()', [snapshot])
     await client.query('COMMIT')
     return data
@@ -137,8 +179,9 @@ async function body(request) {
   for await (const chunk of request) { size += chunk.length; if (size > 30 * 1024 * 1024) throw new Error('The request exceeds the upload limit.'); chunks.push(chunk) }
   return JSON.parse(Buffer.concat(chunks).toString())
 }
-async function start(databasePool) {
+async function start(databasePool,cloudinaryStore) {
   if (databasePool) pool = databasePool
+  media=cloudinaryStore||createCloudinaryStore()
   await pool.query('CREATE SCHEMA IF NOT EXISTS desktop_web; REVOKE ALL ON SCHEMA desktop_web FROM PUBLIC, anon, authenticated; CREATE TABLE IF NOT EXISTS desktop_web.school_state(id integer PRIMARY KEY CHECK(id=1),payload bytea NOT NULL,updated_at timestamptz NOT NULL DEFAULT now()); CREATE TABLE IF NOT EXISTS desktop_web.backup_history(id bigserial PRIMARY KEY,payload bytea NOT NULL,created_at timestamptz NOT NULL DEFAULT now()); ALTER TABLE desktop_web.school_state ENABLE ROW LEVEL SECURITY; ALTER TABLE desktop_web.backup_history ENABLE ROW LEVEL SECURITY; REVOKE ALL ON ALL TABLES IN SCHEMA desktop_web FROM PUBLIC, anon, authenticated;')
   const server = http.createServer(async (request, response) => {
     const origin = request.headers.origin
@@ -173,5 +216,5 @@ async function start(databasePool) {
   await new Promise(resolve => server.listen(Number(process.env.PORT || 4001), '0.0.0.0', resolve))
   return server
 }
-if (require.main === module) start().catch(() => { console.error('School API initialization failed. Check database connectivity and required environment variables.'); process.exitCode = 1 })
+if (require.main === module) start().then(()=>console.info(`School API ready; Cloudinary storage ${media.configured?'configured for '+media.cloudName:'not yet configured'}.`)).catch(() => { console.error('School API initialization failed. Check database connectivity and required environment variables.'); process.exitCode = 1 })
 module.exports = { start, execute, setupAllowed }

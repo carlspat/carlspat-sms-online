@@ -2,11 +2,12 @@ import { useEffect, useState } from 'react'
 import type { FormEvent } from 'react'
 import { Cloud, CloudUpload, RefreshCw, ShieldCheck, Unplug } from 'lucide-react'
 import { browserMode } from './browser-api'
+import CloudMediaPanel from './CloudMediaPanel'
 
 type SyncStatus={configured:boolean;apiBaseUrl:string;pending:number;lastSyncAt:string|null;lastError:string|null;deviceId:string|null}
 
 export default function CloudSyncPanel({token}:{token:string}){
-  if (browserMode) return <section className="panel"><h2>Shared online school</h2><p>Changes are saved to the shared school server. This browser requires an internet connection. Desktop synchronization must be configured separately.</p></section>
+  if (browserMode) return <><section className="panel"><h2>Shared online school</h2><p>Changes are saved to the shared school server. This browser requires an internet connection. Desktop synchronization must be configured separately.</p></section><CloudMediaPanel token={token}/></>
   const [status,setStatus]=useState<SyncStatus|null>(null)
   const [apiBaseUrl,setApiBaseUrl]=useState('')
   const [email,setEmail]=useState('')

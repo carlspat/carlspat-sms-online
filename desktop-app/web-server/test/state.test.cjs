@@ -31,6 +31,6 @@ for (const name of ['../escape', '/etc/passwd', 'C:\\outside', 'school.sqlite', 
 test('every Electron browser method has an API route or explicit cloud handling', () => {
   const calls = require('../../src/browser-operations.json')
   const handlers = require('../operations.json')
-  const special = new Set(['school:choose-logo','students:choose-photo','resources:choose-upload','backups:choose-create','backups:choose-restore','receipts:choose-upload'])
+  const special = new Set(['school:choose-logo','students:choose-photo','resources:choose-upload','backups:choose-create','backups:choose-restore','receipts:choose-upload','cloud-storage:status','cloud-storage:migrate'])
   for (const channel of Object.values(calls)) assert.ok(handlers[channel] || special.has(channel) || channel.startsWith('cloud-sync:'), `Missing ${channel}`)
 })

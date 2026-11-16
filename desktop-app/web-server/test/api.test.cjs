@@ -65,3 +65,44 @@ test('browser API setup, authentication, logo upload, durable reload and CORS', 
     assert.equal(durable.backups.length,1)
   } finally {await new Promise(resolve=>server.close(resolve))}
 })
+
+test('Cloudinary migration is admin-only, durable, and preserves old data on provider failure',async()=>{
+  const durable=new DurablePool()
+  let server=await start(durable),base=`http://127.0.0.1:${server.address().port}`
+  async function rpc(channel,args=[],key) {
+    const response=await fetch(`${base}/api/desktop/${encodeURIComponent(channel)}`,{method:'POST',headers:{'Content-Type':'application/json',Origin:process.env.CORS_ORIGIN,...(key?{'X-School-Setup-Key':key}:{})},body:JSON.stringify({args})})
+    return response.json()
+  }
+  const {createCloudinaryStore}=require('../cloudinary-store.cjs')
+  const fixture=require('./cloudinary-fixture.cjs').cloudinaryFixture()
+  try {
+    const setup=await rpc('auth:setup',[{username:'cloud-owner',password:'OwnerPassword123'}],process.env.SETUP_KEY),token=setup.data.token
+    await rpc('school:choose-logo',[token,{name:'logo.png',data:Buffer.from('cloud-logo-fixture').toString('base64')}])
+    await rpc('users:create',[token,{username:'cloud-teacher',password:'TeacherPassword123',role:'Teacher',firstName:'Test',surname:'Teacher'}])
+    const teacher=await rpc('auth:login',[{username:'cloud-teacher',password:'TeacherPassword123'}])
+    await new Promise(resolve=>server.close(resolve))
+    server=await start(durable,createCloudinaryStore(fixture));base=`http://127.0.0.1:${server.address().port}`
+    assert.equal((await rpc('cloud-storage:status',[token])).data.pendingFiles,1)
+    assert.equal((await rpc('cloud-storage:migrate',[teacher.data.token])).ok,false)
+    assert.equal(fixture.uploads.length,0)
+    const before=durable.saved
+    fixture.failDownloads=true
+    assert.equal((await rpc('cloud-storage:migrate',[token])).ok,false)
+    assert.deepEqual(durable.saved,before)
+    fixture.failDownloads=false
+    const migrated=await rpc('cloud-storage:migrate',[token])
+    assert.equal(migrated.ok,true,JSON.stringify(migrated))
+    assert.equal(migrated.data.migrated,1)
+    const state=JSON.parse(require('node:zlib').gunzipSync(durable.saved))
+    assert.equal(Object.keys(state.files).length,0)
+    assert.equal(Object.keys(state.cloudFiles).length,1)
+    await new Promise(resolve=>server.close(resolve))
+    server=await start(durable,createCloudinaryStore(fixture));base=`http://127.0.0.1:${server.address().port}`
+    const profile=await rpc('school:get',[token])
+    assert.equal(profile.ok,true,JSON.stringify(profile))
+    assert.equal(profile.data.logo_data_url,'data:image/png;base64,'+Buffer.from('cloud-logo-fixture').toString('base64'))
+    const backup=await rpc('backups:choose-create',[token])
+    const full=JSON.parse(require('node:zlib').gunzipSync(Buffer.from(backup.data.data,'base64')))
+    assert.ok(full.files['branding/school-logo.png'])
+  }finally{await new Promise(resolve=>server.close(resolve))}
+})

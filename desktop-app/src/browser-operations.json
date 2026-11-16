@@ -113,5 +113,7 @@
   "exportOnlineBackup": "backups:choose-create",
   "paymentReceipts": "receipts:list",
   "readPaymentReceipt": "receipts:read",
-  "uploadPaymentReceipt": "receipts:choose-upload"
+  "uploadPaymentReceipt": "receipts:choose-upload",
+  "cloudMediaStatus": "cloud-storage:status",
+  "migrateCloudMedia": "cloud-storage:migrate"
 }
