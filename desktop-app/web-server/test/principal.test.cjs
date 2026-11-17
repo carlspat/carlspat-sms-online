@@ -52,5 +52,13 @@ for(const role of ['Principal','ICT Officer'])test(`${role} can approve stakehol
     api.finance.recordPayment(token,{studentId:'pupil',sessionId:session.id,termId:term.id,amount:400,method:'Cash'})
     assert.equal(api.finance.payments(token)[0].amount,400)
     assert.equal(api.students.profile(token,'pupil').fees.outstanding,600)
+    const dashboard=api.dashboard.summary(token)
+    if(role==='Principal'){assert.equal(dashboard.finance.collected,400);assert.equal(dashboard.finance.outstanding,600)}
+    else {assert.equal(dashboard.finance,null);assert.deepEqual(dashboard.recentPayments,[])}
+    const financeUser=api.users.create(admin.token,{username:'finance',password:'FinancePassword123',role:'Finance Officer'})
+    const financeLogin=api.auth.login({username:'finance',password:'FinancePassword123'})
+    assert.equal(api.dashboard.summary(financeLogin.token).finance,null)
+    assert.deepEqual(api.dashboard.summary(financeLogin.token).recentPayments,[])
+    assert.equal(api.dashboard.summary(admin.token).finance.collected,400)
   } finally {db.close();fs.rmSync(root,{recursive:true,force:true})}
 })

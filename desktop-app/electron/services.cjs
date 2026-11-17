@@ -138,7 +138,7 @@ function createServices(db, runtime) {
   const dashboard = { summary(token) {
     const user=actor(token,'dashboard.read')
     const portalOnly=user.roles.some(r=>['Parent','Student','Stakeholder'].includes(r))
-    const isFinance=user.permissions.includes('finance.read')&&!user.roles.some(r=>['Parent','Student'].includes(r))
+    const isFinance=user.roles.some(role=>['Super Admin','Principal'].includes(role))
     let students,staff,parents,byClass=[]
     if(user.roles.includes('Parent')){students=db.prepare("SELECT COUNT(DISTINCT s.id) n FROM students s JOIN student_parents sp ON sp.student_id=s.id JOIN parents p ON p.id=sp.parent_id WHERE p.user_id=? AND s.status='Active'").get(user.id).n;staff=0;parents=0}
     else if(user.roles.includes('Student')){students=db.prepare("SELECT COUNT(*) n FROM students s JOIN student_portal_link l ON l.student_id=s.id WHERE l.user_id=? AND s.status='Active'").get(user.id).n;staff=0;parents=0}

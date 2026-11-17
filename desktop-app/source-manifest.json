@@ -7,7 +7,7 @@
   "tsconfig.app.json": "718d2ffcaa9fe3397944a742c4ac75b863a167abbc3d3a1668094f790e7fc0c9",
   ".env.example": "26ba97874d8614e75953f013c0ca8044eb2c905309d1246526b7f1120cb98d8e",
   "DESKTOP_WEB.md": "9957c6dc6059b58b6cefd5d871b9e3777184975ac2747170b2d2aa5beac5c77a",
-  "src/App.tsx": "351c7737f6b4257ed743842b45ff139f6c1b40ca8797ceb4e67647348d79db11",
+  "src/App.tsx": "048789d27f2ef1f1b7ea6aaf40a723a096cc6f77c932c02135f97fe0b68b6544",
   "src/AuthGate.tsx": "cc169085a5b2bf91118a986fbb8988d06154e134b125f8451893411d72674a17",
   "src/balanceExports.ts": "82e41f36d2edde599a632ae3ea41bc57c38d7d24ffd72f5069a0670029a5df29",
   "src/browser-api.ts": "0a9c7a066eacb025526ba65a7280e3bf8c58a8994b7eed4755ad523c268df146",
@@ -29,7 +29,7 @@
   "electron/portable-backup.cjs": "015184b98045cf633b9ff5e265f376f14dbd9d85fd654a233755d34ee2baea15",
   "electron/preload.cjs": "2638ad0acb20e3f69e21a627e819f409b98ab2b43b538adf8d68ae78d4f5ce13",
   "electron/schema.sql": "ae3b5b045c7c101832ef7d7ac5d7878ea2ec52bf64dbf4cec279a20b0e8b4cd0",
-  "electron/services.cjs": "51cefd4ac35807502185afcd2c62e11ca2476be76eaacf71a6dcec8cdcbd2ccd",
+  "electron/services.cjs": "bc3746eb2914ca896ae867f54ace3603e7d8a199a671f3e751f9bb5845363664",
   "electron/storage.cjs": "e32790eaffab4066362882d075589456437ae45bf30ce0d31644137a3d1af4ad",
   "electron/sync.cjs": "45030407969664af683a02f3d3c3262c068fc2f7e3cac26c2492f45fcf41a97b",
   "public/olufunmilayo-logo.png": "983858278501565f9fc1b6bf10468ed44743bf3374f53fa3079aa15238e64a82",
@@ -44,7 +44,7 @@
   "web-server/test/api.test.cjs": "bc45fa14ab690cdc961b3441c656cd2be8b16ab77ac9bd9f6d5132ae026cabae",
   "web-server/test/cloudinary-fixture.cjs": "e08880298bd3b8e24986c1176c590bccdef999afb5a1648e2e3b32915e5ff209",
   "web-server/test/cloudinary.test.cjs": "226d3f9e9a99d456f4aebaa2aeb57d16fa8a6f019373f270f5680d80eb4141e5",
-  "web-server/test/principal.test.cjs": "faa590ed35b71fe2b5265e4c7d9546b13413290e3db467fe533f7f9e13ecc9f2",
+  "web-server/test/principal.test.cjs": "59ac5f91e4c729fcfad33d6a67e6449b18f000c94bf1f4d04dfa6c5598bb83a8",
   "web-server/test/services.test.cjs": "93ca3eaf6af5897ec32d701ba33fbddda7b5c2230d567432edbde9a5cc03662d",
   "web-server/test/state.test.cjs": "26a693292f0423b5da3d1398a0b0373a10d8faee22dc94c78592f9152ba5c4f0"
 }
