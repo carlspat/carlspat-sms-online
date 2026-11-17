@@ -1,5 +1,6 @@
 const { contextBridge, ipcRenderer } = require('electron')
 const calls = {
+  parentDirectory: ['users:parent-directory'],
   updateOwnAccount: ['auth:update-account'],
   paymentReceipts: ['receipts:list'], readPaymentReceipt: ['receipts:read'], uploadPaymentReceipt: ['receipts:choose-upload'],
   exportOnlineBackup: ['online:export-backup'],

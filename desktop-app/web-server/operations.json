@@ -426,5 +426,9 @@
   "auth:update-account": [
     "auth",
     "updateAccount"
+  ],
+  "users:parent-directory": [
+    "users",
+    "parents"
   ]
 }

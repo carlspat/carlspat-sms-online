@@ -76,6 +76,7 @@ app.whenReady().then(async () => {
     'fees:create-category': (_, token, input) => services.finance.createCategory(token, input),
     'fees:update-category': (_, token, id, input) => services.finance.updateCategory(token, id, input),
     'fees:delete-category': (_, token, id) => services.finance.deleteCategory(token, id),
+    'users:parent-directory': (_, token) => services.users.parents(token),
     'users:list': (_, token) => services.users.list(token),
     'users:create': (_, token, input) => services.users.create(token, input),
     'users:update': (_, token, id, input) => services.users.update(token, id, input),

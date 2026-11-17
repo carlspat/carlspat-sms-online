@@ -9,6 +9,7 @@ import { paymentAccountsForRoles } from './payment-accounts'
 
 const navigation=[
   {title:'Overview',icon:LayoutDashboard,permission:''},{title:'Students',icon:GraduationCap,permission:'students.read'},{title:'Resources',icon:BookOpen,permission:'resources.read'},{title:'User accounts',icon:Users,permission:'users.manage'},
+  {title:'Parents',icon:Users,permission:'parents.read'},{title:'Teachers',icon:Users,permission:'staff.read'},
   {title:'Classes',icon:BookOpen,permission:'students.read'},{title:'Academics',icon:BookOpen,permission:'academics.read'},{title:'Fees',icon:WalletCards,permission:'finance.read'},{title:'Finance',icon:CircleDollarSign,permission:'finance.read'},
   {title:'Attendance',icon:CalendarDays,permission:'attendance.read'},{title:'Reports',icon:ChartNoAxesCombined,permission:'reports.read'},
 ]
