@@ -115,5 +115,6 @@
   "readPaymentReceipt": "receipts:read",
   "uploadPaymentReceipt": "receipts:choose-upload",
   "cloudMediaStatus": "cloud-storage:status",
-  "migrateCloudMedia": "cloud-storage:migrate"
+  "migrateCloudMedia": "cloud-storage:migrate",
+  "updateOwnAccount": "auth:update-account"
 }

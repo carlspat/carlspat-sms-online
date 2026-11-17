@@ -102,6 +102,24 @@ function createServices(db, runtime) {
     },
     logout(token) { db.prepare('DELETE FROM sessions WHERE token_hash=?').run(hash(String(token || ''))); return true },
     me(token) { return safeUser(actor(token).id) },
+    updateAccount(token,input) {
+      const current=actor(token)
+      const row=db.prepare('SELECT * FROM users WHERE id=?').get(current.id)
+      if(typeof input?.currentPassword!=='string'||input.currentPassword.length>200)throw new Error('Enter your current password.')
+      const provided=crypto.scryptSync(input.currentPassword,row.password_salt,64)
+      if(!crypto.timingSafeEqual(provided,Buffer.from(row.password_hash,'hex')))throw new Error('Current password is incorrect.')
+      const username=text(input.username,'Username',60)
+      const email=input.email?text(input.email,'Email',254):null
+      if(email&&!/^\S+@\S+\.\S+$/.test(email))throw new Error('Enter a valid email address.')
+      if(db.prepare('SELECT id FROM users WHERE username=? COLLATE NOCASE AND id<>?').get(username,current.id))throw new Error('That username is already in use.')
+      const secret=input.newPassword?password(input.newPassword):null
+      atomic(()=>{
+        db.prepare('UPDATE users SET username=?,email=?,password_hash=?,password_salt=?,must_change_password=0,updated_at=CURRENT_TIMESTAMP WHERE id=?').run(username,email,secret?.digest||row.password_hash,secret?.salt||row.password_salt,current.id)
+        db.prepare('DELETE FROM sessions WHERE user_id=?').run(current.id)
+        audit(current.id,'own_login_details_updated','users',current.id)
+      })
+      return true
+    },
   }
 
   const school = {

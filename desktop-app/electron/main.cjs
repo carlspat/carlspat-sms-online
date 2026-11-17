@@ -39,6 +39,7 @@ app.whenReady().then(async () => {
     'auth:setup': (_, input) => services.auth.createFirstAdmin(input),
     'auth:login': (_, input) => services.auth.login(input),
     'auth:logout': (_, token) => services.auth.logout(token),
+    'auth:update-account': (_, token, input) => services.auth.updateAccount(token, input),
     'auth:me': (_, token) => services.auth.me(token),
     'cloud-sync:status': async (_, token) => { const user=services.auth.me(token);if(!user.permissions.includes('school.manage'))throw new Error('Only a school administrator can manage cloud sync.');return cloudSync.status() },
     'cloud-sync:connect': async (_, token, input) => { const user=services.auth.me(token);if(!user.permissions.includes('school.manage'))throw new Error('Only a school administrator can manage cloud sync.');return cloudSync.connect(input) },

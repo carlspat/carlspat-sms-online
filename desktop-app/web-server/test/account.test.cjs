@@ -1,0 +1,31 @@
+const {test}=require('node:test')
+const assert=require('node:assert/strict')
+const fs=require('node:fs'),os=require('node:os'),path=require('node:path')
+const SQLite=require('../sqlite.cjs')
+const {openDatabase}=require('../../electron/storage.cjs')
+const {createServices}=require('../../electron/services.cjs')
+
+test('own login changes require password, preserve roles, revoke sessions and reject duplicate usernames',()=>{
+  const root=fs.mkdtempSync(path.join(os.tmpdir(),'account-test-'))
+  const db=openDatabase(path.join(root,'school.sqlite'),SQLite)
+  try {
+    const services=createServices(db,{getPath:()=>root})
+    const admin=services.auth.createFirstAdmin({username:'owner',password:'OriginalPassword123'})
+    const second=services.auth.login({username:'owner',password:'OriginalPassword123'})
+    const other=services.users.create(admin.token,{username:'another',password:'AnotherPassword123',role:'Super Admin'})
+    const input={username:'renamed',email:'owner@example.test',currentPassword:'wrong',newPassword:'UpdatedPassword123'}
+    assert.throws(()=>services.auth.updateAccount(admin.token,input),/Current password/)
+    assert.throws(()=>services.auth.updateAccount(admin.token,{...input,currentPassword:'OriginalPassword123',username:'ANOTHER'}),/already in use/)
+    services.auth.updateAccount(admin.token,{...input,currentPassword:'OriginalPassword123'})
+    assert.throws(()=>services.auth.me(admin.token))
+    assert.throws(()=>services.auth.me(second.token))
+    assert.throws(()=>services.auth.login({username:'owner',password:'OriginalPassword123'}))
+    assert.throws(()=>services.auth.login({username:'renamed',password:'OriginalPassword123'}))
+    const updated=services.auth.login({username:'renamed',password:'UpdatedPassword123'})
+    assert.deepEqual(updated.user.roles,admin.user.roles)
+    assert.equal(updated.user.email,'owner@example.test')
+    assert.equal(services.users.list(updated.token).find(u=>u.id===other.id).username,'another')
+    services.auth.updateAccount(updated.token,{username:'renamed-again',email:'',currentPassword:'UpdatedPassword123',newPassword:''})
+    assert.ok(services.auth.login({username:'renamed-again',password:'UpdatedPassword123'}).token)
+  } finally {db.close();fs.rmSync(root,{recursive:true,force:true})}
+})

@@ -422,5 +422,9 @@
   "backups:restore": [
     "backups",
     "restore"
+  ],
+  "auth:update-account": [
+    "auth",
+    "updateAccount"
   ]
 }

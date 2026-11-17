@@ -1,5 +1,6 @@
 const { contextBridge, ipcRenderer } = require('electron')
 const calls = {
+  updateOwnAccount: ['auth:update-account'],
   paymentReceipts: ['receipts:list'], readPaymentReceipt: ['receipts:read'], uploadPaymentReceipt: ['receipts:choose-upload'],
   exportOnlineBackup: ['online:export-backup'],
   setupStatus: ['setup:status'], setupAdmin: ['auth:setup'], login: ['auth:login'], logout: ['auth:logout'], me: ['auth:me'], selfRegisterStakeholder: ['stakeholders:self-register'], cloudSyncStatus: ['cloud-sync:status'], connectCloudSync: ['cloud-sync:connect'], runCloudSync: ['cloud-sync:run'], initialCloudSync: ['cloud-sync:initial'], disconnectCloudSync: ['cloud-sync:disconnect'],

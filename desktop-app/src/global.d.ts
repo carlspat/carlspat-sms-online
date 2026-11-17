@@ -1,6 +1,7 @@
 type SchoolUser={id:string;username:string;email?:string|null;roles:string[];permissions:string[];active:number}
 type SchoolResponse<T>=Promise<T>
 interface Window{schoolApp:{
+updateOwnAccount(token:string,input:{username:string;email:string;currentPassword:string;newPassword:string}):SchoolResponse<boolean>;
 cloudMediaStatus(token:string):SchoolResponse<any>;migrateCloudMedia(token:string):SchoolResponse<any>;
 paymentReceipts(token:string):SchoolResponse<any[]>;readPaymentReceipt(token:string,id:string):SchoolResponse<{filename:string;mimeType:string;data:string}>;uploadPaymentReceipt(token:string,input:any):SchoolResponse<any>;
 exportOnlineBackup(token:string):SchoolResponse<any>;
