@@ -4,6 +4,6 @@ const schoolFees: PaymentAccount = { purpose: 'school-fees', title: 'Primary and
 
 export function paymentAccountsForRoles(roles: string[]): PaymentAccount[] {
   if (roles.includes('Stakeholder')) return [examination]
-  if (roles.some(role => ['Parent', 'Student', 'Super Admin', 'Finance Officer'].includes(role))) return [schoolFees, examination]
+  if (roles.some(role => ['Parent', 'Student', 'Super Admin', 'Finance Officer', 'Principal'].includes(role))) return [schoolFees, examination]
   return []
 }

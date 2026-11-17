@@ -5,7 +5,7 @@ import { paymentAccountsForRoles } from './payment-accounts'
 
 export default function PaymentReceipts({roles,token}:{roles:string[];token:string}) {
   const stakeholder=roles.includes('Stakeholder'),parent=roles.includes('Parent')&&!stakeholder
-  const host=roles.includes('Super Admin')||roles.includes('Finance Officer')
+  const host=roles.includes('Super Admin')||roles.includes('Finance Officer')||roles.includes('Principal')
   const [receipts,setReceipts]=useState<any[]>([]),[targets,setTargets]=useState<any[]>([])
   const [target,setTarget]=useState(''),[purpose,setPurpose]=useState(stakeholder?'examinations':'school-fees')
   const [amount,setAmount]=useState(''),[paidOn,setPaidOn]=useState(new Date().toISOString().slice(0,10)),[reference,setReference]=useState('')
