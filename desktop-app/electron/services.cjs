@@ -2,7 +2,7 @@ const crypto = require('node:crypto')
 const fs = require('node:fs')
 const path = require('node:path')
 
-const roles = ['Super Admin','Teacher','Parent','Student','Stakeholder','Finance Officer','Principal']
+const roles = ['Super Admin','Teacher','Parent','Student','Stakeholder','Finance Officer','Principal','ICT Officer']
 const permissionNames = ['dashboard.read','school.manage','users.manage','students.read','students.manage','classes.manage','academics.read','academics.manage','academics.approve','parents.read','staff.read','finance.read','finance.manage','attendance.read','attendance.manage','stakeholders.read','stakeholders.manage','communication.read','communication.manage','resources.read','resources.manage','reports.read','backups.manage']
 const uuid = () => crypto.randomUUID()
 const now = () => new Date().toISOString()
@@ -19,6 +19,7 @@ function createServices(db, runtime) {
     const permission = Object.fromEntries(db.prepare('SELECT id,key FROM permissions').all().map((p) => [p.key,p.id]))
     const mapping = {
       'Super Admin': permissionNames,
+      'ICT Officer': ['dashboard.read','students.read','students.manage','parents.read','staff.read','academics.read','academics.manage','academics.approve','attendance.read','attendance.manage','stakeholders.read','stakeholders.manage','users.manage','finance.read','finance.manage','reports.read'],
       'Principal': ['dashboard.read','students.read','students.manage','parents.read','staff.read','academics.read','academics.manage','academics.approve','attendance.read','attendance.manage','stakeholders.read','stakeholders.manage','users.manage','finance.read','finance.manage','reports.read'],
       'Teacher': ['dashboard.read','students.read','academics.read','academics.manage','attendance.read','attendance.manage','communication.read','communication.manage','resources.read','resources.manage'],
       'Parent': ['dashboard.read','students.read','academics.read','finance.read','attendance.read','communication.read','communication.manage','resources.read'],

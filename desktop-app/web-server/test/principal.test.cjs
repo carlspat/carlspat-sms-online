@@ -3,15 +3,15 @@ const fs=require('node:fs'),os=require('node:os'),path=require('node:path')
 const SQLite=require('../sqlite.cjs')
 const {openDatabase}=require('../../electron/storage.cjs')
 const {createServices}=require('../../electron/services.cjs')
-test('Principal can approve stakeholders and manage finance and ordinary accounts while settings and Super Admin accounts stay protected',()=>{
+for(const role of ['Principal','ICT Officer'])test(`${role} can approve stakeholders and manage finance and ordinary accounts while settings and Super Admin accounts stay protected`,()=>{
   const root=fs.mkdtempSync(path.join(os.tmpdir(),'principal-test-'))
   const db=openDatabase(path.join(root,'school.sqlite'),SQLite)
   try {
     const api=createServices(db,{getPath:()=>root})
     const admin=api.auth.createFirstAdmin({username:'owner',password:'TestPassword123'})
-    api.users.create(admin.token,{username:'principal',password:'PrincipalPassword123',role:'Principal'})
+    api.users.create(admin.token,{username:'principal',password:'PrincipalPassword123',role})
     const {token,user}=api.auth.login({username:'principal',password:'PrincipalPassword123'})
-    assert.deepEqual(user.roles,['Principal'])
+    assert.deepEqual(user.roles,[role])
     for(const permission of ['students.read','students.manage','parents.read','staff.read','attendance.read','attendance.manage','academics.read','academics.manage','academics.approve','stakeholders.read','stakeholders.manage','users.manage','finance.read','finance.manage','reports.read'])assert.ok(user.permissions.includes(permission),permission)
     for(const permission of ['school.manage','backups.manage'])assert.ok(!user.permissions.includes(permission),permission)
     assert.deepEqual(api.users.parents(token),[])
